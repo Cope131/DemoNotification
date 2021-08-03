@@ -48,6 +48,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void notify2() {
+        NotificationManager notificationManager = (NotificationManager)
+                getSystemService(NOTIFICATION_SERVICE);
+
+        // importance - default, high (banner)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "default", "Default Channel", NotificationManager.IMPORTANCE_DEFAULT);
+
+            channel.setDescription("This is for default notification");
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // This Activity is launched when Notification is Clicked
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity
+                ( MainActivity.this, requestCode, intent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+        NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle()
+                .setBigContentTitle("Big Text – Long Content")
+                .bigText("This is one big text" +
+                        " - A quick brown fox jumps over a lazy brown dog "+
+                        "\nLorem ipsum dolor sit amet, sea eu quod des")
+                .setSummaryText("Reflection Journal?");
+
+        // Build notification
+        // Auto cancel - notification will be removed from the shade after clicking on it
+        // small icon  - icon displayed on status bar and notification box
+        // sound       - default ringtone (below oreo)
+        // priority    - high is a banner on screen (below oreo)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "default")
+                .setContentTitle("Amazing Offer!")
+                .setContentText("Subject")
+                .setSmallIcon(android.R.drawable.btn_star_big_off)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setPriority(Notification.PRIORITY_DEFAULT)
+                .setStyle(bigText);
+
+        Notification notification = builder.build();
+
+        // Create Notification
+        notificationManager.notify(notificationID, notification);
+        finish();
+
     }
 
     private void notify1() {
@@ -88,7 +134,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Create Notification
         notificationManager.notify(notificationID, notification);
         finish();
-
-
     }
 }
